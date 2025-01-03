@@ -24,3 +24,19 @@ Clone the repository and install the required dependencies:
 git clone https://github.com/abrahamchandy95/MultiPortfolioManager.git
 cd MultiPortfolioManager
 pip install -r requirements.txt
+```
+
+## Usage
+Run the following script on the terminal
+```bash
+python3 main.py <user> <action>
+```
+Action can be "data_entry", "profit", "dividends" or "summary"
+
+Example:
+```bash
+python3 main.py mom summary
+```
+The trades information per user should be stored as a json file under data/trades/
+but a csv/xlsx file can be used instead to upload all the trades done.
+Columns of the file should include date, ticker, amount, quantity, price.
