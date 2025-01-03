@@ -22,7 +22,7 @@ def load_user_trades(trades_path) -> pd.DataFrame:
             return df
     except FileNotFoundError:
         return pd.DataFrame(
-            columns=['date', 'ticker', 'amount', 'quantity', 'price']
+            columns=['date', 'ticker', 'amount', 'quantity', 'price'] #type: ignore
         )
 
 def save_user_trades(df: pd.DataFrame, trades_path):
@@ -71,7 +71,7 @@ def display_dividends(adjusted_trades):
 def create_summary(coster, valuator):
     costs = coster.summarize_costs()
     values = valuator.get_valuation()
-    summary = pd.merge(costs, values, on='ticker', how='inner')
+    summary = pd.merge(costs, values, on=['ticker', 'total_quantity'], how='inner')
     summary['profit_loss'] = summary['market_value'] - summary['total_cost']
     return summary
 
