@@ -1,0 +1,9 @@
+*ipynb
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+data/trades/*
+.DS_Store
+etc/
