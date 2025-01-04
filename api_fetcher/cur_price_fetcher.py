@@ -31,7 +31,12 @@ class StockPriceFetcher:
     def get_open_price(self, ticker):
         stock = yf.Ticker(ticker)
         info = stock.info
-        price = info.get("regularMarketOpen")
+        price = (
+            info.get('currentPrice')
+            or info.get('navPrice')
+            or info.get('regularMarketOpen')
+        )
+        # Check if a valid price was retrieved
         if price is None:
             raise ValueError(f"Unable to fetch price for ticker {ticker}")
         return price
