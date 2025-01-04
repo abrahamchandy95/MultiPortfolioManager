@@ -96,7 +96,7 @@ def main():
     trades_file = get_user_files(args.user)
     trades = load_user_trades(trades_file)
 
-    if trades.empty:
+    if trades.empty and args.action != "data_entry":
         print("No trades found. Please add trades using 'data_entry'.")
         return
 
