@@ -74,7 +74,7 @@ def create_summary(coster, valuator):
     summary = pd.merge(costs, values, on=['ticker', 'total_quantity'], how='inner')
     summary['profit_loss'] = summary['market_value'] - summary['total_cost']
     # remove entries where all stocks have been sold
-    summary = summary[summary['quantity'].round(3) > 0.000]
+    summary = summary[summary['total_quantity'].round(3) > 0.000]
     return summary
 
 def main():
