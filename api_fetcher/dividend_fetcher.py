@@ -1,6 +1,8 @@
 import pandas as pd
 import yfinance as yf
 
+from utils.utils import convert_to_ny_datetime
+
 class DividendFetcher:
     def __init__(self, tickers):
         self.tickers = tickers
@@ -20,19 +22,13 @@ class DividendFetcher:
         for ticker in self.tickers:
             stock = yf.Ticker(ticker)
             dividends = stock.dividends
-            if isinstance(dividends.index, pd.DatetimeIndex):
-                if dividends.index.tz is None:
-                    dividends.index = dividends.index.tz_localize('America/New_York')
-
+            new_index = convert_to_ny_datetime(dividends.index)
+            # Assert that the converted index is indeed a DatetimeIndex
+            assert isinstance(new_index, pd.DatetimeIndex), "Index type error"
+            # Assign the converted index back to dividends
+            dividends.index = new_index
             if start_date:
-                start_date = pd.to_datetime(start_date)
-
-                # If start_date is tz-naive, localize it; otherwise, convert its timezone
-                if start_date.tzinfo is None:
-                    start_date = start_date.tz_localize('America/New_York')
-                else:
-                    start_date = start_date.tz_convert('America/New_York')
-
+                start_date = convert_to_ny_datetime(start_date)
                 # Filter dividends
                 dividends = dividends[dividends.index > start_date]
 

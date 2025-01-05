@@ -1,5 +1,7 @@
 import pandas as pd
 
+from utils.utils import convert_to_ny_datetime
+
 class PortfolioUpdater:
     def __init__(self, trades: pd.DataFrame):
         trades['date'] = pd.to_datetime(trades['date'])
@@ -67,7 +69,7 @@ class StockSplitAdjuster:
     def adjust_for_splits(self):
 
         df = self.trades.copy()
-        df['date'] = pd.to_datetime(df['date']).dt.tz_localize("America/New_York")
+        df['date'] = convert_to_ny_datetime(df['date'])
 
         if not self.fetcher.is_valid():
             self.fetcher.fetch_all_splits()
@@ -75,10 +77,7 @@ class StockSplitAdjuster:
         for ticker, splits in self.fetcher.split_cache.items():
             if not splits.empty:
                 for date, ratio in splits.items():
-                    if date.tzinfo is None:
-                        date = pd.Timestamp(date).tz_localize("America/New_York")
-                    else:
-                        date = date.tz_convert("America/New_York")
+                    date = convert_to_ny_datetime(date)
                     rows = df[(df['ticker']==ticker) & (df['date'] < date)]
                     df.loc[rows.index, 'quantity'] *= ratio
                     df.loc[rows.index, 'price'] /= ratio

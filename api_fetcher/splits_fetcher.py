@@ -1,6 +1,8 @@
 import pandas as pd
 import yfinance as yf
 
+from utils import convert_to_ny_datetime
+
 class StockSplitFetcher:
     def __init__(self, all_trades):
         self.trades = all_trades
@@ -30,7 +32,7 @@ class StockSplitFetcher:
 
     def fetch_splits(self, ticker, earliest):
 
-        earliest = pd.Timestamp(earliest).tz_localize("America/New_York")
+        earliest = convert_to_ny_datetime(earliest)
 
         if not self.is_valid():
             self.clear_cache()
@@ -39,6 +41,9 @@ class StockSplitFetcher:
 
             stock = yf.Ticker(ticker)
             splits = stock.splits
+            new_index = convert_to_ny_datetime(splits.index)
+            assert isinstance(new_index, pd.DatetimeIndex), "Index type error"
+            splits.index = new_index
             splits_after_purchase = splits.index > earliest
             relevant_splits = splits[splits_after_purchase]
             self.split_cache[ticker] = relevant_splits

@@ -1,5 +1,6 @@
 import pandas as pd
 from api_fetcher import DividendFetcher
+from utils import convert_to_ny_datetime
 
 class DividendCalculator:
     def __init__(self, trades: pd.DataFrame):
@@ -9,13 +10,9 @@ class DividendCalculator:
         self.dividends: pd.DataFrame = pd.DataFrame()
 
     def normalize_dates(self):
-            """
-            Ensure dates are timezone-aware and normalized to 'America/New_York'.
-            """
-            if self.trades['date'].dt.tz is None:
-                self.trades['date'] = self.trades['date'].dt.tz_localize('America/New_York')
-            else:
-                self.trades['date'] = self.trades['date'].dt.tz_convert('America/New_York')
+
+        new_dates = convert_to_ny_datetime(self.trades['date'])
+        self.trades['date'] = new_dates
 
     def get_earliest_date(self):
 
@@ -42,7 +39,6 @@ class DividendCalculator:
         for ticker in self.trades['ticker'].unique():
             trades = self.trades[self.trades['ticker'] == ticker]
             dividends = self.dividends[self.dividends['ticker'] == ticker]
-
             total = 0
 
             for _, row in dividends.iterrows():
